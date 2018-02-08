@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据双向绑定</title>
+</head>
+<body>
+<div id="app">
+    <input type="text" my-model="name">
+    <input type="text" my-model="msg">
+    {{name}}{{msg}}
+    <div>数据双向绑定</div>
+    <div>
+        <div>{{name}}</div>
+    </div>
+</div>
+<script>
+    let obj = {
+        name: new ViewModel('姓名sieg'),
+        msg: new ViewModel('你好啊')
+    };
+
+    function ViewModel(data) {
+        this.data = data;
+        this.nodes = [];
+    }
+
+    ViewModel.prototype.connectNodes = function (node) {
+        this.nodes.push(node);
+    };
+
+    ViewModel.prototype.setValue = function (newValue) {
+        if (this.data !== newValue) {
+            this.data = newValue;
+            this.update();
+        }
+    };
+
+    ViewModel.prototype.update = function () {
+        this.nodes.forEach((node) => {
+            if (node.nodeType === 1) {
+                node.value = this.data;
+            } else {
+                node.textContent = node.my.replace(/\{\{([^}]*)\}\}/g, function () {
+                    return obj[arguments[1]].data
+                })
+            }
+        })
+    };
+
+    function matchModel(el) {
+        //设置控制的范围
+        let element = document.querySelector(el);
+        //创建文档碎片
+        let fragement = document.createDocumentFragment();
+        //把现在dom上的元素放进文档碎片中
+        let child;
+        while (child = element.firstChild) {
+            fragement.appendChild(child);
+        }
+        //拆解fragement
+        function replaceDom(fragementDom) {
+            Array.from(fragementDom.childNodes).forEach((node) => {
+                //元素节点
+                if (node.nodeType === 1) {
+                    //filter出attr中有my-
+                    Array.from(node.attributes).forEach((attr) => {
+                        const { name, value } = attr;
+                        if (name.includes('my-')) {
+                            obj[value].connectNodes(node);
+                            node.addEventListener('input', function (ev) {
+                                obj[value].setValue(ev.target.value);
+                            })
+                        }
+                    })
+                }
+                //文本节点 判断文本中存在{{}}
+                const reg = /\{\{([^}]*)\}\}/g;
+                const content = node.textContent;
+                if (node.nodeType === 3 && reg.test(content)) {
+                    //自定义属性my 存放{{name}}这种原始数据
+                    node.my = content;
+                    //将新的值replace content里的值
+                    content.replace(reg, function () {
+                        obj[arguments[1]].connectNodes(node);
+                    })
+                }
+                //嵌套结构里的元素一层层遍历找出来
+                if (node.childNodes) {
+                    replaceDom(node);
+                }
+            });
+        }
+
+        replaceDom(fragement);
+
+        //初始化一次model的数据
+        Object.keys(obj).forEach((key) => {
+            obj[key].update();
+        });
+
+        //把生成的文档碎片重新塞回去
+        element.appendChild(fragement);
+    }
+    matchModel('#app');
+</script>
+</body>
+</html>
