@@ -1,18 +1,22 @@
 # mvvm-data-bind
-几种mvvm数据绑定的实现
+> 几种mvvm数据绑定的实现
 
-implement1:
+#### 方式1:
 类似发布订阅的形式，将数据和节点关联在一起
 
-TODO:
-implement2:
-ng1的实现方式，脏值检查，$watch $apply
+### TODO:
 
-implement3:
-vue的实现方式，通过Object.
+#### ng1的实现方式:
+脏值检查，$watch $apply
 
-implement4:
-ng2+的实现方式，我还不晓得23333
+#### vue的实现方式:
+数据劫持，通过Object.defineProperty()
 
-implement5:
-react的实现方式，没搞清+10086
+#### ng2+的实现方式:
+我还不晓得23333
+
+#### react的实现方式:
+没搞清+10086
+
+#### proxy:
+略略略
