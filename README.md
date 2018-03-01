@@ -10,13 +10,13 @@
 ### TODO:
 
 #### vue的实现方式:
-数据劫持，通过Object.defineProperty()
+数据劫持，重点在Object.defineProperty()的setter和getter
 
 #### ng2+的实现方式:
-我还不晓得23333
+zone
 
 #### react的实现方式:
-没搞清+10086
+没搞清
 
 #### proxy:
 略略略

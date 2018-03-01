@@ -9,7 +9,6 @@ let Scope = function () {
     this.$$watchers = [];
 };
 
-//遍历检查$$watchers是否脏了
 Scope.prototype.digest = function () {
     //每次apply先默认调一次检查
     let dirty = true;
@@ -20,6 +19,7 @@ Scope.prototype.digest = function () {
 
 Scope.prototype.digestOne = function () {
     let dirty = false;
+    //遍历检查$$watchers是否脏了
     this.$$watchers.forEach((_watcher) => {
         const oldVal = _watcher.oldValue;
         const newVal = this[_watcher.attr];
